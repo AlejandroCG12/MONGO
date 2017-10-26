@@ -5,11 +5,16 @@
  */
 package mongolocal;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.QueryBuilder;
+import static java.nio.file.Files.lines;
+import static java.nio.file.Files.lines;
+import java.util.regex.Pattern;
 import org.omg.CORBA.portable.UnknownException;
 
 /**
@@ -18,14 +23,15 @@ import org.omg.CORBA.portable.UnknownException;
  */
 public class NewJFrame extends javax.swing.JFrame {
     DB db;
-    DBCollection doc;
+    DBCollection collPlato,collMenu;
     /**
      * Creates new form NewJFrame
      */
     public NewJFrame() {
         MongoClient mongo = crearConexion();
         db = mongo.getDB("Restaurante");
-        doc = db.getCollection("Menu");
+        collPlato = db.getCollection("Plato");
+        collMenu = db.getCollection("Menu");
         initComponents();
     }
     
@@ -63,35 +69,35 @@ public class NewJFrame extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jButton2.setText("Mostrar todos los menus que inicien con I");
+        jButton2.setText("Mostrar todos los platos con más de 600 calorias");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Mostrar el plato 1 con su nombre y sus ingredientes asociados");
+        jButton3.setText("Mostrar los platos con menos de 4000 en valor real");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Mostrar");
+        jButton4.setText("Mostrar el plato \"Albondigas\" y mostrar solo su nombre y los ingredientes asociados");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Mostrar");
+        jButton5.setText("Mostrar todos los menus que empiecen por la letra \"I\"");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Mostrar");
+        jButton6.setText("Mostrar todos los chefs");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -113,7 +119,7 @@ public class NewJFrame extends javax.swing.JFrame {
                             .addComponent(jButton4)
                             .addComponent(jButton5)
                             .addComponent(jButton6))
-                        .addGap(0, 190, Short.MAX_VALUE)))
+                        .addGap(0, 88, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -138,26 +144,54 @@ public class NewJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        DBCursor cursor = doc.find();
+        jTextArea1.setText("");
+        BasicDBObject getQuery = new BasicDBObject();
+        getQuery.put("calorias", new BasicDBObject("$gt", 600));
+        DBCursor cursor = collPlato.find(getQuery);
         while(cursor.hasNext()){
             jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        jTextArea1.setText("");
+        BasicDBObject getQuery = new BasicDBObject();
+        getQuery.put("valor_real", new BasicDBObject("$lt", 4000));
+        DBCursor cursor = collPlato.find(getQuery);
+        while(cursor.hasNext()){
+            jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        jTextArea1.setText("");
+        BasicDBObject getQuery = new BasicDBObject();
+        BasicDBObject fields = new BasicDBObject("nombre", 1).append("ingredientes", 1);
+        getQuery.put("nombre", "Albondigas");
+        DBCursor cursor = collPlato.find(getQuery,fields);
+        while(cursor.hasNext()){
+            jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
+        jTextArea1.setText("");
+        Pattern I = Pattern.compile("I", Pattern.LITERAL);
+        BasicDBObject getQuery = new BasicDBObject("nombre",I);
+        DBCursor cursor = collMenu.find(getQuery);
+        while(cursor.hasNext()){
+            jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        jTextArea1.setText("");
+        BasicDBObject getQuery = new BasicDBObject();
+        BasicDBObject fields = new BasicDBObject("chef", 1);
+        DBCursor cursor = collMenu.find(getQuery,fields);
+        while(cursor.hasNext()){
+            jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
