@@ -116,6 +116,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Mostrar todos los menus que empiecen por la letra &quot;I&quot;"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+      </AccessibilityProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
       </Events>

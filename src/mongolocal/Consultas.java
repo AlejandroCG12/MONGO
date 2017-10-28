@@ -164,6 +164,8 @@ public class Consultas extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jButton5.getAccessibleContext().setAccessibleName("");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -173,7 +175,11 @@ public class Consultas extends javax.swing.JFrame {
         getQuery.put("calorias", new BasicDBObject("$gt", 600));
         DBCursor cursor = collPlato.find(getQuery);
         while(cursor.hasNext()){
-            jTextArea1.setText(jTextArea1.getText()+"\n"+cursor.next());
+            BasicDBObject objeto = (BasicDBObject) cursor.next();
+            String cadena = "Nombre: "+(String)objeto.get("nombre")+", Calorias: "+String.valueOf(objeto.get("calorias"))+", Valor real: "+
+            String.valueOf(objeto.get("valor_real"))+", Valor comercial: "+String.valueOf(objeto.get("valor_comercial"))+", Receta: "+
+            String.valueOf(objeto.get("receta"));   
+            jTextArea1.setText(cadena+"\n"+jTextArea1.getText());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
